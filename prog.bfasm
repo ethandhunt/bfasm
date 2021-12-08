@@ -1,0 +1,7 @@
+.start
+    -print "aneurysm"
+
+-print %value
+    alloc @@temp
+    > @@temp {[-]} {+} * %value {.}
+    free @@temp

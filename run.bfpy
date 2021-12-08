@@ -1,0 +1,53 @@
+import sys
+i=' '.join(sys.argv[1:])
+m=[]
+p=0
+def a():
+    global m
+    while p>=len(m):m+=[0]
+a()
+def b():
+    global i
+    if len(i)==0:return 0
+    t=i[0];i=i[1:];return ord(t)
+
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+97)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+110)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+101)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+117)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+114)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+121)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+115)%256
+print(chr(m[p]), end='')
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+109)%256
+print(chr(m[p]), end='')
