@@ -5,12 +5,17 @@
 .start
     alloc @a
     alloc @b
-    > @a {,}
-    .setv @b @a
-    -print "a: "
+    .set @a $16
+    .set @b $2
+    ;a = 16
+    ;b = 2
+
+    .mulv @a @b
+    .mulv @a @b
+    ;a = a * b
+    ;a = a * b
+
+    .add @a $5
+    ;a = a + 5
+
     -printv @a
-    -print \n "b: "
-    -printv @b
-    -print \n
-
-

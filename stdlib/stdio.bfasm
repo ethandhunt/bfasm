@@ -6,5 +6,9 @@
 -printv %loc
     > %loc {.}
 
+-printc %loc
+    ;prints cell as decimal
+    ;not implemented
+
 -read %loc
     > %loc {,}

@@ -231,18 +231,6 @@ def parseLine(funcStack, funcName, line, args):
     elif parsedLine[0] == 'alloc':
         allocMem(*parsedLine[1:], funcStack=funcStack)
 
-    # occupy cell (good for arrays)
-    elif parsedLine[0] == 'occ':
-        if type(parsedLine[1]) == str:
-            if parsedLine[1] == '*':
-                pass
-        elif type(parsedLine[1]) == int:
-            occupied.append(parsedLine[1])
-
-        else:
-            print('\033[31mError\033[0m: invalid occ statement')
-            sys.exit(1)
-
     else:
         print('\033[31mError\033[0m: unknown command')
         sys.exit(1)
