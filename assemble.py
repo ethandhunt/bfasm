@@ -231,6 +231,14 @@ def parseLine(funcStack, funcName, line, args):
     elif parsedLine[0] == 'alloc':
         allocMem(*parsedLine[1:], funcStack=funcStack)
 
+    # while
+    elif parsedLine[0] == 'while':
+        compiled += goMem(parsedLine[1])
+        compiled += '['
+        enterFunc(funcStack, parsedLine[2], parsedLine[3:])
+        compiled += goMem(parsedLine[1])
+        compiled += ']'
+
     else:
         print('\033[31mError\033[0m: unknown command')
         sys.exit(1)
