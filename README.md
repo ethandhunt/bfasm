@@ -55,6 +55,8 @@ use example
     ; already at @a
 ```
 compiles to `+[+.]`
+- If statements
+  - `if @a .func "args"` -> same as a while statement but instead of going to `@a` at the end of the loop, it goes to an unallocated cell, and sets it to 0, which means that it only loops once
 - Examples
 ```
 ; this program prints 'a'
