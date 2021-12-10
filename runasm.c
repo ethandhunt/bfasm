@@ -6,9 +6,9 @@ int system(const char *command);
 
 void main(int argc, char *argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        printf("Usage: run <in.bfasm> [<args>]\n");
+        printf("Usage: run <in.bfasm> <bf args>\n");
         exit(1);
     }
     char str1[100] = "python3 assemble.py ";
@@ -25,5 +25,7 @@ void main(int argc, char *argv[])
         exit(1);
     }
     printf("running\n========================\n");
-    system("python3 run.bfpy");
+    char str4[] = "python3 run.bfpy ";
+    strcat(str4, argv[2]);
+    system(str4);
 }

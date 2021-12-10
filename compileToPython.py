@@ -41,7 +41,8 @@ prog = new
 
 compiled = '''
 import sys
-i=' '.join(sys.argv[1:])
+with open(sys.argv[1]) as f:
+    i = f.read()
 m=[]
 p=0
 def a():

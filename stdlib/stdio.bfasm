@@ -1,0 +1,10 @@
+-print %chr
+    alloc @stdio-print
+    > @stdio-print {[-]} {+} * %chr {.}
+    free @stdio-print
+
+-printv %loc
+    > %loc {.}
+
+-read %loc
+    > %loc {,}

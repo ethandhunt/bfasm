@@ -1,22 +1,41 @@
 import sys
 import json
-import re
 
 if len(sys.argv) != 3:
     print("Usage: python3 assemble.py <in.bfasm> <out.bf>")
     sys.exit(1)
 
+
 with open(sys.argv[1]) as f:
     asm = f.read()
 
+# preproccesor
+replace = {}
+for line in asm.split('\n'):
+    if line.startswith('#'):
+        parsedLine = line[1:].split(' ')
+        command = parsedLine[0]
+        if command == 'define':
+            replace[parsedLine[1]] = parsedLine[2]
+        elif command == 'include':
+            with open(parsedLine[1]) as f:
+                asm += f.read()
+
+for item in replace:
+    asm = asm.replace(item, replace[item])
+
+
 compiled = ""
 
-parseDict = {}
+parseDict = {'def': {}}
 currentItem = ""
 for line in asm.split('\n'):
     if line == '':
         continue
 
+    # comments
+    if line.strip().startswith(';'):
+        continue
     if line.startswith(' '*4):
         parseDict[currentItem]['body'] += [line.strip()]
     elif line.startswith('.'):
@@ -34,25 +53,22 @@ print()
 
 currentPtr = 0
 mem = {}
-def goMem(n, funcStack):
-    print(f'goMem({n}, {funcStack})')
+occupied = []
+def goMem(n):
     global currentPtr
-    result = currentPtr - getMem(n, funcStack)
-    currentPtr = result
+    result = getMem(n) - currentPtr
+    currentPtr += result
+    print(f'\033[35mgoMem({n}) ->', '>' * result + '<' * -result, '\033[0m')
     return '>' * result + '<' * -result
 
-def getMem(n, funcStack):
-    print(f'getMem({n}, {funcStack})')
+def getMem(n):
+    print(f'getMem({n})')
     global mem
     n = n[1:]
-    if n.startswith('@'):
-        n = funcStack+' '+n[1:]
     if n in mem:
         return mem[n]
-    elif n in funcStack:
-        return funcStack[n]
     else:
-        print('\033[31mError\033[0m: memory not allocated')
+        print('\033[31mgetMem Error\033[0m: memory not allocated')
         sys.exit(1)
 
 def allocMem(*args, funcStack):
@@ -60,16 +76,15 @@ def allocMem(*args, funcStack):
     global mem
     for n in args:
         n = n[1:]
-        if n.startswith('@'):
-            n = funcStack+' '+n[1:]
         print('allocating', repr(n))
         if n in mem:
-            print('\033[31mError\033[0m: memory already allocated')
+            print('\033[31mallocMem Error\033[0m: memory already allocated')
             sys.exit(1)
         x = 0
-        while x in mem:
+        while x in mem.values():
             x += 1
         mem[n] = x
+        occupied.append(x)
     print('after alloc:', mem)
 
 def freeMem(*args, funcStack):
@@ -77,11 +92,10 @@ def freeMem(*args, funcStack):
     global mem
     for n in args:
         n = n[1:]
-        if n.startswith('@'):
-            n = funcStack+' '+n[1:]
         if n not in mem:
-            print('\033[31mError\033[0m: memory not allocated')
+            print('\033[31mfreeMem Error\033[0m: memory not allocated')
             sys.exit(1)
+        occupied.remove(mem[n])
         del mem[n]
 
 def parseArgs(funcStack, funcName, line, args):
@@ -125,12 +139,16 @@ def parseArgs(funcStack, funcName, line, args):
         elif inStr:
             for x in item:
                 result.append(ord(x))
-        elif item.startswith('#'):
-            result.append(int(item[1:]))
         elif item.startswith('%'):
             result.append(args[parseDict[funcName]['args'].index(item)])
-        elif item.startswith('@@'):
-            result.append('@'+funcStack+' '+item[2:])
+        elif item.startswith('$'):
+            result.append(int(item[1:]))
+        elif item.startswith('#'):
+            try:
+                parsedLine.append(parseDict['def'][x])
+            except KeyError:
+                print('\033[31mError\033[0m: undefined label', x)
+                sys.exit(1)
         else:
             result.append(item)
     print('\033[32mdebug parseArgs (pass2):', repr(result), '\033[0m')
@@ -166,13 +184,15 @@ def parseLine(funcStack, funcName, line, args):
         current = ''
         inbf = False
         for item in parsedLine[1:]:
-            #print('debug:')
-            #print('lastItem:', lastItem)
-            #print('lastOp:', lastOp)
-            #print('current:', current)
-            #print('inbf:', inbf)
-            #print('item:', item)
-            #print()
+            '''
+            print('debug:')
+            print('lastItem:', lastItem)
+            print('lastOp:', lastOp)
+            print('current:', current)
+            print('inbf:', inbf)
+            print('item:', item)
+            print()
+            '''
             if item == '{':
                 current += lastItem
                 lastItem = ''
@@ -192,11 +212,15 @@ def parseLine(funcStack, funcName, line, args):
                 else:
                     current += item
             elif item.startswith('@'):
-                current += goMem(item, funcStack)
+                current += lastItem
+                lastItem = ''
+                current += goMem(item)
             else:
                 print('\033[31mError\033[0m: injection panic :(')
+                print('item:', item)
                 sys.exit(1)
         current += lastItem
+        print('inject compiled:', current)
         compiled += current
 
     # free mem
@@ -207,9 +231,25 @@ def parseLine(funcStack, funcName, line, args):
     elif parsedLine[0] == 'alloc':
         allocMem(*parsedLine[1:], funcStack=funcStack)
 
+    # occupy cell (good for arrays)
+    elif parsedLine[0] == 'occ':
+        if type(parsedLine[1]) == str:
+            if parsedLine[1] == '*':
+                pass
+        elif type(parsedLine[1]) == int:
+            occupied.append(parsedLine[1])
+
+        else:
+            print('\033[31mError\033[0m: invalid occ statement')
+            sys.exit(1)
+
     else:
         print('\033[31mError\033[0m: unknown command')
         sys.exit(1)
+
+    print('\033[33mMEMORY\033[0m:', mem)
+    print('\033[33mOCCUPIED\033[0m:', occupied)
+    print('\033[33mCURRENTPTR\033[0m:', currentPtr)
 
             
 

@@ -1,5 +1,6 @@
 import sys
-i=' '.join(sys.argv[1:])
+with open(sys.argv[1]) as f:
+    i = f.read()
 m=[]
 p=0
 def a():
@@ -11,6 +12,30 @@ def b():
     if len(i)==0:return 0
     t=i[0];i=i[1:];return ord(t)
 
+m[p]=b()
+p+=1;a()
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+p-=1;a()
+while m[p]:
+	p+=1;a()
+	m[p]=(m[p]+1)%256
+	p+=1;a()
+	m[p]=(m[p]+1)%256
+	p-=2;a()
+	m[p]=(m[p]-1)%256
+
+p+=2;a()
+while m[p]:
+	p-=2;a()
+	m[p]=(m[p]+1)%256
+	p+=2;a()
+	m[p]=(m[p]-1)%256
+
+while m[p]:
+	m[p]=(m[p]-1)%256
+
 while m[p]:
 	m[p]=(m[p]-1)%256
 
@@ -19,35 +44,41 @@ print(chr(m[p]), end='')
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+110)%256
+m[p]=(m[p]+58)%256
 print(chr(m[p]), end='')
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+101)%256
+m[p]=(m[p]+32)%256
+print(chr(m[p]), end='')
+p-=2;a()
+print(chr(m[p]), end='')
+p+=2;a()
+while m[p]:
+	m[p]=(m[p]-1)%256
+
+m[p]=(m[p]+10)%256
 print(chr(m[p]), end='')
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+117)%256
+m[p]=(m[p]+98)%256
 print(chr(m[p]), end='')
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+114)%256
+m[p]=(m[p]+58)%256
 print(chr(m[p]), end='')
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+121)%256
+m[p]=(m[p]+32)%256
 print(chr(m[p]), end='')
+p-=1;a()
+print(chr(m[p]), end='')
+p+=1;a()
 while m[p]:
 	m[p]=(m[p]-1)%256
 
-m[p]=(m[p]+115)%256
-print(chr(m[p]), end='')
-while m[p]:
-	m[p]=(m[p]-1)%256
-
-m[p]=(m[p]+109)%256
+m[p]=(m[p]+10)%256
 print(chr(m[p]), end='')
