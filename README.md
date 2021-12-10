@@ -33,6 +33,28 @@ weird brainfuck assembly language compiler(?) and stdlib
   - `free @a` -> frees the cell located at @a, the cell can be reallocated
   - freeing does not set the cell to zero, but you could make a function that does set it to zero and then frees it
   - allocating will find the closest free cell to the start of bf memory
+- While loops
+  - `while @a .function "args"` -> while `@a` is not 0, call `.function` with `"args"`
+inject example
+```
+    ; while @a .func
+    > @a {[}
+    .func
+    > @a {]}
+```
+use example
+```
+.start
+    alloc @a
+    > @a {+}
+    while @a .function "args"
+
+.function %a %b %c %d
+    ; empty function doesn't work (.bfpy syntax error)
+    > {+.}
+    ; already at @a
+```
+compiles to `+[+.]`
 - Examples
 ```
 ; this program prints 'a'
