@@ -1,8 +1,8 @@
-.bf
+### .bf
     raw brainfuck file
 
-.bfpy
+### .bfpy
     .bf file compiled into python
 
-.bfasm
+### .bfasm
     bfassembly file
