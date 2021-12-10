@@ -27,10 +27,10 @@ for item in replace:
 
 compiled = ""
 
-parseDict = {'def': {}}
+parseDict = {}
 currentItem = ""
 for line in asm.split('\n'):
-    if line == '':
+    if line == '' or line[0] == '#':
         continue
 
     # comments
