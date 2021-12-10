@@ -16,7 +16,23 @@ weird brainfuck assembly language compiler(?) and stdlib
   - `-function %arg1 %arg2 ... %argN` -> arguments given when called must be divisible by number of arguments
 - Calling functions
   - `.function $number "string" @memory_address` -> enters function and passes args, throws error if not same number of args passed in as accepted in declaration
-  - `-function $number "string" @memory_address` -> enters function len(function args) / len(call args), throws error if not whole number of enters
+  - `-function $number "string" @memory_address` -> enters function len(function args) / len(call args) times, throws error if not whole number of enters
+- Strings
+  - `"abc"` -> converted into `97 98 99` in parseArgs pass 2
+  - `debug parseArgs (pass1): ['-print', '', '"', 'abc', '"', '']` -> `debug parseArgs (pass2): ['', '-print', 97, 98, 99]`
+- Numbers
+  - `$1` -> converted into `1`
+  - `$1260` -> converted into `1260`
+  - if a number is not prefaced by `$` the compiler(?) will throw an error
+- Injections
+  - `> {+}` -> adds `'+'` to compiled code
+  - `> {+} * $10` -> adds `'+' * 10` to compiled code
+  - `> @a {[-]} {+} * %arg` -> goes to cell `@a` sets it to 0 and increases it by the value of `%arg`
+- Memory management
+  - `alloc @a` -> allocates a cell that is not already allocated to be referred to later in the program by `@a`
+  - `free @a` -> frees the cell located at @a, the cell can be reallocated
+  - freeing does not set the cell to zero, but you could make a function that does set it to zero and then frees it
+  - allocating will find the closest free cell to the start of bf memory
 - Examples
 ```
 ; this program prints 'a'
@@ -63,5 +79,5 @@ weird brainfuck assembly language compiler(?) and stdlib
   -printv @a
   .setv @a @b
   .setv @b @c
-  > {]}}
+  > {]}
 ```
