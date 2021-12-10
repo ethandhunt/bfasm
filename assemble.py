@@ -239,6 +239,19 @@ def parseLine(funcStack, funcName, line, args):
         compiled += goMem(parsedLine[1])
         compiled += ']'
 
+    # if
+    elif parsedLine[0] == 'if':
+        compiled += goMem(parsedLine[1])
+        compiled += '['
+        enterFunc(funcStack, parsedLine[2], parsedLine[3:])
+        x = 0
+        while x in mem.values():
+            x += 1
+        print('x:', x)
+        result = x - currentPtr
+        compiled += '>' * result + '<' * -result
+        compiled += '[-]]'
+
     else:
         print('\033[31mError\033[0m: unknown command')
         sys.exit(1)
