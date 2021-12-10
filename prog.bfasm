@@ -1,5 +1,6 @@
 #define \n $10
 #include stdlib/stdio.bfasm
+#include stdlib/stdv.bfasm
 
 .start
     alloc @a
@@ -13,12 +14,3 @@
     -print \n
 
 
-.setv %a %b
-    ;a = b
-    alloc @temp0
-    > %a {[-]}
-    > %b {[} %a {+} @temp0 {+} %b {-]}
-    > @temp0 {[} %b {+} @temp0 {-]}
-    ; set @temp0 to 0
-    > @temp0 {[-]}
-    free @temp0

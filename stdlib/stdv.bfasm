@@ -1,0 +1,29 @@
+.setv %a %b
+    ;a = b
+    alloc @temp0
+    > %a {[-]}
+    > %b {[} %a {+} @temp0 {+} %b {-]}
+    > @temp0 {[} %b {+} @temp0 {-]}
+    ; set @temp0 to 0
+    > @temp0 {[-]}
+    free @temp0
+
+.addv %a %b
+    ;a = a + b
+    alloc @.addv_temp0
+    > %a {[-]}
+    > %b {[} %a {+} @.addv_temp0 {+} %b {-]}
+    > @.addv_temp0 {[} %b {+} @.addv_temp0 {-]}
+    ; set @.addv_temp0 to 0
+    > @.addv_temp0 {[-]}
+    free @.addv_temp0
+
+.subv %a %b
+    ;a = a - b
+    alloc @.subv_temp0
+    > %a {[-]}
+    > %b {[} %a {+} @.subv_temp0 {+} %b {-]}
+    > @.subv_temp0 {[} %b {+} @.subv_temp0 {-]}
+    ; set @.subv_temp0 to 0
+    > @.subv_temp0 {[-]}
+    free @.subv_temp0

@@ -1,5 +1,0 @@
-.start
-    -print "Hello World!"
-
--print %chr
-    > {[-]} {+} * %chr {.}
