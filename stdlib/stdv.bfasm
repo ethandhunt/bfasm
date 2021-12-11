@@ -186,6 +186,25 @@
     free @.leqv_temp0
     uoc @.leqv_temp1 $3
 
+.zgtdv %c %a %b
+    ; c = a > b
+    ; b = b - a
+    ; unsigned
+    .calloc @.zgtv_temp0
+    .calloc @.zgtv_temp1
+    > %c {[-]}
+    > %a {[} @.zgtv_temp0 {+}
+    > %b {[-} @.zgtv_temp0 {[-]} @.zgtv_temp1 {+} %b {]}
+    > @.zgtv_temp0 {[-} %c {+} @.zgtv_temp0 {]}
+    > @.zgtv_temp1 {[-} %b {+} @.zgtv_temp1 {]}
+    > %b {-} %a {-]}
+
+.zgtv %c %a %b
+    ; c = a > b
+    ; unsigned
+    .zgtdv %c %a %b
+    .addv %b %a
+
 .calloc %loc
     ; cancellating alloc
     ; sets loc to zero after allocating
