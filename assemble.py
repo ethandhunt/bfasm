@@ -158,6 +158,7 @@ def parseArgs(funcStack, funcName, line, args):
 lineTokens = '*+">'
 lineSeps = ' '
 def parseLine(funcStack, funcName, line, args):
+    global currentPtr
     global compiled
     if line.count('"') % 2 != 0:
         print('\033[31mError\033[0m: unclosed string :(')
@@ -254,6 +255,9 @@ def parseLine(funcStack, funcName, line, args):
 
     # occupy
     elif parsedLine[0] == 'occ':
+        if len(parsedLine) != 3:
+            print('\033[31mError\033[0m: wrong number of arguments for occupy')
+            sys.exit(1)
         x = 0
         while not all(y not in occupied for y in range(x, x + parsedLine[2])):
             x += 1
@@ -261,6 +265,13 @@ def parseLine(funcStack, funcName, line, args):
         print('\033[36moccupy\033[0m:', x, '->', x + parsedLine[2])
         mem[parsedLine[1][1:]] = x
         occupied.extend(range(x, x + parsedLine[2]))
+
+    # ptr
+    elif parsedLine[0] == 'ptr':
+        if len(parsedLine) != 2:
+            print('\033[31mError\033[0m: wrong number of arguments for ptr')
+            sys.exit(1)
+        currentPtr += parsedLine[1]
 
     else:
         print('\033[31mError\033[0m: unknown command')
