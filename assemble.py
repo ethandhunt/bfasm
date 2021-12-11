@@ -58,7 +58,7 @@ def goMem(n):
     global currentPtr
     result = getMem(n) - currentPtr
     currentPtr += result
-    print(f'\033[35mgoMem({n}) ->', '>' * result + '<' * -result, '\033[0m')
+    print(f'\033[35mgoMem({n}) ->\033[96m', '>' * result + '<' * -result, '\033[0m')
     return '>' * result + '<' * -result
 
 def getMem(n):
@@ -221,7 +221,7 @@ def parseLine(funcStack, funcName, line, args):
                 print('item:', item)
                 sys.exit(1)
         current += lastItem
-        print('inject compiled:', current)
+        print('inject compiled:\033[96m', current, '\033[0m')
         compiled += current
 
     # free mem
@@ -239,19 +239,6 @@ def parseLine(funcStack, funcName, line, args):
         enterFunc(funcStack, parsedLine[2], parsedLine[3:])
         compiled += goMem(parsedLine[1])
         compiled += ']'
-
-    # if
-    elif parsedLine[0] == 'if':
-        compiled += goMem(parsedLine[1])
-        compiled += '['
-        enterFunc(funcStack, parsedLine[2], parsedLine[3:])
-        x = 0
-        while x in mem.values():
-            x += 1
-        print('x:', x)
-        result = x - currentPtr
-        compiled += '>' * result + '<' * -result
-        compiled += '[-]]'
 
     # occupy
     elif parsedLine[0] == 'occ':
@@ -305,7 +292,7 @@ def enterFunc(funcStack, funcName, args):
 enterFunc('', '.start', [])
 
 print('compiled:')
-print(repr(compiled))
+print(compiled)
 
 with open(sys.argv[2], 'w') as f:
     f.write(compiled)

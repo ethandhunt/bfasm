@@ -1,3 +1,6 @@
+; Algorithms implemented from https://esolangs.org/wiki/Brainfuck_algorithms
+
+
 .set %a %v
     > %a {[-]} {+} * %v
 
@@ -38,6 +41,104 @@
     > %a {[}  @.mulv_temp1 {+} %a {-]}
     > @.mulv_temp1 {[} %b {[} %a {+} @.mulv_temp0 {+} %b {-]} @.mulv_temp0 {[} %b {+} @.mulv_temp0 {-]} @.mulv_temp1 {-]}
     free @.mulv_temp0 @.mulv_temp1
+
+.sqrv %a
+    ; a = a * a
+    .calloc @.sqrv_temp0
+    .calloc @.sqrv_temp1
+    > %a {[} @.sqrv_temp0 {+} %a {-]}
+    > @.sqrv_temp0 {[-[} @.sqrv_temp1 {+} %a {++} @.sqrv_temp0 {-]} %a {+} @.sqrv_temp1 {[} @.sqrv_temp0 {+} @.sqrv_temp1 {-]} @.sqrv_temp0 {]}
+    free @.sqrv_temp0 @.sqrv_temp1
+
+.divv %a %b
+    ;a = a / b
+    .calloc @.divv_temp0
+    .calloc @.divv_temp1
+    .calloc @.divv_temp2
+    .calloc @.divv_temp3
+
+    > %a {[} @.divv_temp0 {+} %a {-]}
+    > @.divv_temp0 {[}
+    > %b {[} @.divv_temp1 {+} @.divv_temp2 {+} %b {-]}
+    > @.divv_temp2 {[} %b {+} @.divv_temp2 {-]}
+    > @.divv_temp1 {[}
+    > @.divv_temp2 {+}
+    > @.divv_temp0 {-[} @.divv_temp2 {[-]} @.divv_temp3 {+} @.divv_temp0 {-]}
+    > @.divv_temp3 {[} @.divv_temp0 {+} @.divv_temp3 {-]}
+    > @.divv_temp2 {[}
+    > @.divv_temp1 {-}
+    > {[} %a {-} @.divv_temp1 {[-]]+}
+    > @.divv_temp2 {-]}
+    > @.divv_temp1 {-]}
+    > %a {+}
+    > @.divv_temp0 {]}
+    free @.divv_temp0 @.divv_temp1 @.divv_temp2 @.divv_temp3
+
+.powv %a %b
+    ; a = a ^ b
+    .calloc @.powv_temp0
+    .calloc @.powv_temp1
+    .calloc @.powv_temp2
+
+    > %a {[} @.powv_temp0 {+} %a {-]}
+    > %a {+}
+    > %b {[}
+    > @.powv_temp1 {[-]}
+    > @.powv_temp2 {[-]}
+    > %a {[} @.powv_temp2 {+} %a {-]}
+    > @.powv_temp2 {[}
+    > @.powv_temp0 {[} %a {+} @.powv_temp1 {+} @.powv_temp0 {-]}
+    > @.powv_temp1 {[} @.powv_temp0 {+} @.powv_temp1 {-]}
+    > @.powv_temp2 {-]}
+    > %b {-]}
+    free @.powv_temp0 @.powv_temp1 @.powv_temp2
+
+.swpv %a %b
+    ; a, b = b, a
+    .calloc @.swpv_temp0
+
+    > %a {[} @.swpv_temp0 {+} %a {-]}
+    > %b {[} %a {+} %b {-]}
+    > @.swpv_temp0 {[} %b {+} @.swpv_temp0 {-]}
+    free @.swpv_temp0
+
+.invv %a
+    ; a = -a
+    .calloc @.invv_temp0
+
+    > %a {[} @.invv_temp0 {-} %a {-]}
+    > @.invv_temp0 {[} %a {-} @.invv_temp0 {+]}
+    free @.invv_temp0
+
+.bitnotv %a
+    ; a = not a (bitwise)
+    .calloc @.bitnotv_temp0
+
+    > %a {-}
+    > {[} @.bitnotv_temp0 {-} %a {-]}
+    > @.bitnotv_temp0 {[} %a {+} @.bitnotv_temp0 {-]}
+    free @.bitnotv_temp0
+
+.equv %a %b
+    ; a = a == b
+    ; 1 True
+    ; 0 False
+    .calloc @.equv_temp0
+    .calloc @.equv_temp1
+
+    > %a {[} @.equv_temp1 {+} %a {-]+}
+    > %b {[} @.equv_temp1 {-} @.equv_temp0 {+} %b {-]}
+    > @.equv_temp0 {[} %b {+} @.equv_temp0 {-]}
+    > @.equv_temp1 {[} %a {-} @.equv_temp1 {[-]]}
+    free @.equv_temp0 @.equv_temp1
+
+.equdv %a %b
+    ; a = a == b
+    ; 1 True
+    ; 0 False
+    ; b is not preserved
+
+    > %a {[-} %b {-} %a {]+} %b {[} %a {-} %b {[-]]} 
 
 .calloc %loc
     alloc %loc
