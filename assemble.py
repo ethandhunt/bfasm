@@ -253,6 +253,15 @@ def parseLine(funcStack, funcName, line, args):
         mem[parsedLine[1][1:]] = x
         occupied.extend(range(x, x + parsedLine[2]))
 
+    # unoccupy
+    elif parsedLine[0] == 'uoc':
+        if len(parsedLine) != 3:
+            print('\033[31mError\033[0m: wrong number of arguments for unoccupy')
+            sys.exit(1)
+        for x in range(mem[parsedLine[1][1:]], parsedLine[2]):
+            occupied.remove(x)
+        freeMem((parsedLine[1]))
+
     # ptr
     elif parsedLine[0] == 'ptr':
         if len(parsedLine) != 2:
@@ -292,7 +301,7 @@ def enterFunc(funcStack, funcName, args):
 enterFunc('', '.start', [])
 
 print('compiled:')
-print(compiled)
+print('\033[96m'+compiled+'\033[0m')
 
 with open(sys.argv[2], 'w') as f:
     f.write(compiled)

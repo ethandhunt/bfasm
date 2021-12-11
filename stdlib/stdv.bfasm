@@ -140,6 +140,54 @@
 
     > %a {[-} %b {-} %a {]+} %b {[} %a {-} %b {[-]]} 
 
+.neqv %a %b
+    ; a = a != b
+    ; 1 True
+    ; 0 False
+    .calloc @.neqv_temp0
+    .calloc @.neqv_temp1
+
+    > %a {[} @.neqv_temp1 {+} %a {-]}
+    > %b {[} @.neqv_temp1 {-} @.neqv_temp0 {+} %b {-]}
+    > @.neqv_temp0 {[} %b {+} @.neqv_temp0 {-]}
+    > @.neqv_temp1 {[} %a {+} @.neqv_temp1 {[-]]}
+    free @.neqv_temp0 @.neqv_temp1
+
+.lesv %a %b
+    ; a = a < b
+    ; 1 True
+    ; 0 False
+    ; unsigned
+    .calloc @.lesv_temp0
+    occ @.lesv_temp1 $3
+    > @.lesv_temp1 {[-]>[-]+>[-]<<}
+
+    > %b {[} @.lesv_temp0 {+} @.lesv_temp1 {+} %b {-]}
+    > @.lesv_temp0 {[} %b {+} @.lesv_temp0 {-]}
+    > %a {[} @.lesv_temp0 {+} %a {-]+}
+    > @.lesv_temp1 {[>-]>[<} %a {-} @.lesv_temp0 {[-]} @.lesv_temp1 {>->]<+<}
+    > @.lesv_temp0 {[} @.lesv_temp1 {-[>-]>[<} %a {-} @.lesv_temp0 {[-]+} @.lesv_temp1 {>->]<+<} @.lesv_temp0 {-]}
+    free @.lesv_temp0
+    uoc @.lesv_temp1 $3
+
+.leqv %a %b
+    ; a = a <= b
+    ; 1 True
+    ; 0 False
+    ; unsigned
+    .calloc @.leqv_temp0
+    occ @.leqv_temp1 $3
+    > @.leqv_temp1 {[-]>[-]+>[-]<<}
+    > %b {[} @.leqv_temp0 {+} @.leqv_temp1 {+} %b {-]}
+    > @.leqv_temp1 {[} %b {+} @.leqv_temp1 {-]}
+    > %a {[} @.leqv_temp1 {+} %a {-]}
+    > @.leqv_temp1 {[>-]>[<} %a {+} @.leqv_temp0{[-]} @.leqv_temp1 {>->]<+<}
+    > @.leqv_temp0 {[} @.leqv_temp1 {-[>-]>[<} %a {+} @.leqv_temp0 {[-]+} @.leqv_temp1 {>->]<+<} @.leqv_temp0 {-]}
+    free @.leqv_temp0
+    uoc @.leqv_temp1 $3
+
 .calloc %loc
+    ; cancellating alloc
+    ; sets loc to zero after allocating
     alloc %loc
     > %loc {[-]}

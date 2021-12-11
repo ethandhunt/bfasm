@@ -5,12 +5,32 @@
 .start
     alloc @a
     alloc @b
+    alloc @n
 
+    .check $1 $2
+    .check $2 $1
+    .check $1 $1
+    .check $0 $0
+
+.check %val1 %val2
+    .set @a %val1
+    .set @b %val2
+
+    .leqv @a @b
+
+    .set @n $1
     while @a .ye
-    -read @a @b
-    .equv @a @b
-    while @a .ye
+    while @n .na
+
+    -print \n
 
 .ye
-    -print "y"
     .set @a $0
+    .set @n $0
+
+    -print "ye"
+
+.na
+    .set @n $0
+
+    -print "na"
