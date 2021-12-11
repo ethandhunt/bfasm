@@ -5,17 +5,12 @@
 .start
     alloc @a
     alloc @b
-    .set @a $16
-    .set @b $2
-    ;a = 16
-    ;b = 2
 
-    .mulv @a @b
-    .mulv @a @b
-    ;a = a * b
-    ;a = a * b
+    while @a .ye
+    -read @a @b
+    .equv @a @b
+    while @a .ye
 
-    .add @a $5
-    ;a = a + 5
-
-    -printv @a
+.ye
+    -print "y"
+    .set @a $0
