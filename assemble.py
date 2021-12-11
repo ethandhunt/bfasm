@@ -71,8 +71,8 @@ def getMem(n):
         print('\033[31mgetMem Error\033[0m: memory not allocated')
         sys.exit(1)
 
-def allocMem(*args, funcStack):
-    print(f'allocMem({args}, {funcStack})')
+def allocMem(*args):
+    print(f'allocMem({args})')
     global mem
     for n in args:
         n = n[1:]
@@ -81,14 +81,14 @@ def allocMem(*args, funcStack):
             print('\033[31mallocMem Error\033[0m: memory already allocated')
             sys.exit(1)
         x = 0
-        while x in mem.values():
+        while x in occupied:
             x += 1
         mem[n] = x
         occupied.append(x)
     print('after alloc:', mem)
 
-def freeMem(*args, funcStack):
-    print(f'freeMem({args}, {funcStack})')
+def freeMem(*args):
+    print(f'freeMem({args})')
     global mem
     for n in args:
         n = n[1:]
@@ -225,11 +225,11 @@ def parseLine(funcStack, funcName, line, args):
 
     # free mem
     elif parsedLine[0] == 'free':
-        freeMem(*parsedLine[1:], funcStack=funcStack)
+        freeMem(*parsedLine[1:])
 
     # alloc mem
     elif parsedLine[0] == 'alloc':
-        allocMem(*parsedLine[1:], funcStack=funcStack)
+        allocMem(*parsedLine[1:])
 
     # while
     elif parsedLine[0] == 'while':
@@ -251,6 +251,16 @@ def parseLine(funcStack, funcName, line, args):
         result = x - currentPtr
         compiled += '>' * result + '<' * -result
         compiled += '[-]]'
+
+    # occupy
+    elif parsedLine[0] == 'occ':
+        x = 0
+        while not all(y not in occupied for y in range(x, x + parsedLine[2])):
+            x += 1
+            
+        print('\033[36moccupy\033[0m:', x, '->', x + parsedLine[2])
+        mem[parsedLine[1][1:]] = x
+        occupied.extend(range(x, x + parsedLine[2]))
 
     else:
         print('\033[31mError\033[0m: unknown command')
